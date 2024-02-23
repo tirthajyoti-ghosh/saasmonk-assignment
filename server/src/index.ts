@@ -14,7 +14,7 @@ app.use(express.json());
 const port = 3000;
 
 // MongoDB connection
-const uri = `${process.env.MONGO_URI}/saasmonk-assignment`;
+const uri = `${process.env.MONGO_URI}`;
 mongoose.connect(uri)
   .then(() => console.log('MongoDB connected...'))
   .catch((err) => console.log(err));
