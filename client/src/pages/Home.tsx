@@ -22,10 +22,13 @@ function Home() {
 
         (async () => {
             try {
-                const response = await axios.get<Movie[]>(
+                const {data} = await axios.get<Movie[]>(
                     `${import.meta.env.VITE_API_URL}/movies`
                 );
-                setMovies(response.data);
+                setMovies(data.map((movie) => ({
+                    ...movie,
+                    averageRating: movie.averageRating ? Number(movie.averageRating.toFixed(2)) : 0,
+                })));
             } catch (error) {
                 console.error("Failed to fetch movies", error);
             }
