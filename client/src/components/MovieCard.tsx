@@ -18,7 +18,7 @@ export default function MovieCard({
                 <h2 className="text-2xl text-custom-black">{title}</h2>
                 <p className="text-lg italic text-gray-700">Released: {date}</p>
                 <p className="text-lg font-bold text-gray-700">
-                    Rating: {rating}
+                    Rating: {rating}/10
                 </p>
             </div>
         </div>
