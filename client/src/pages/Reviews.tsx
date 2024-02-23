@@ -1,35 +1,54 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+
 import Layout from "../components/Layout";
 import ReviewCard from "../components/ReviewCard";
+import { useMovieList } from "../store/movies";
+import { Review } from "../types";
 
 function Reviews() {
+    const { movies } = useMovieList();
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const params = useParams<{ id: string }>();
+
+    const movie = movies.find((movie) => movie._id === params.id);
+
+    useEffect(() => {
+        const source = axios.CancelToken.source();
+
+        (async () => {
+            try {
+                const response = await axios.get<Review[]>(
+                    `${import.meta.env.VITE_API_URL}/movies/${params.id}/reviews`
+                );
+                setReviews(response.data);
+            } catch (error) {
+                console.error("Failed to fetch movies", error);
+            }
+        })();
+
+        return () => {
+            source.cancel();
+        };
+    }, [params.id, setReviews]);
+
     return (
         <Layout>
             <div className="flex flex-col md:flex-row justify-between items-center py-4">
-                <h1 className="text-3xl font-bold text-custom-black">Star Wars: A New Hope</h1>
+                <h1 className="text-3xl font-bold text-custom-black">{movie?.name}</h1>
                 <div className="flex items-center">
-                    <span className="text-3xl mr-2 text-custom-blue">9/10</span>
+                    <span className="text-3xl mr-2 text-custom-blue">{movie?.averageRating}/10</span>
                 </div>
             </div>
-            <ReviewCard
-                review="The best movie ever!"
-                rating="9"
-                author="John Doe"
-            />
-            <ReviewCard
-                review="The best movie ever!"
-                rating="9"
-                author="John Doe"
-            />
-            <ReviewCard
-                review="The best movie ever!"
-                rating="9"
-                author="John Doe"
-            />
-            <ReviewCard
-                review="The best movie ever!"
-                rating="9"
-                author="John Doe"
-            />
+            {reviews.map((review) => (
+                <ReviewCard
+                    key={review._id}
+                    review={review.reviewComments}
+                    rating={review.rating}
+                    author={review.reviewerName}
+                />
+            ))}
         </Layout>
     );
 }

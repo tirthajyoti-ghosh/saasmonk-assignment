@@ -1,4 +1,4 @@
-export default function ReviewCard({ review, rating, author }: { review: string, rating: string, author: string }) {
+export default function ReviewCard({ review, rating, author }: { review: string, rating: number, author: string }) {
     return (
         <div className="flex justify-between items-start mt-4 border-2 border-gray-200 px-4 py-4 mb-5">
         <div>

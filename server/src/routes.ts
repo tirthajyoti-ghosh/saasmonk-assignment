@@ -20,6 +20,11 @@ router.get('/movies', async (req: Request, res: Response) => {
                 $addFields: {
                     averageRating: { $avg: "$reviews.rating" }
                 }
+            },
+            {
+                $project: {
+                    reviews: 0,
+                },
             }
         ];
 
@@ -98,7 +103,11 @@ router.get('/movies/:id/reviews', async (req: Request, res: Response) => {
 
 router.post('/movies/:id/reviews', async (req: Request, res: Response) => {
     try {
-        const newReview = new Review(req.body);
+        const movieId = req.params.id;
+        if (!req.body.name || !req.body.rating || !req.body.review) {
+            return res.status(400).json({ message: 'Name, rating and review comments are required' });
+        }
+        const newReview = new Review({ movieId, reviewerName: req.body.name, rating: req.body.rating, reviewComments: req.body.review });
         const savedReview = await newReview.save();
         res.status(201).json(savedReview);
     } catch (error) {

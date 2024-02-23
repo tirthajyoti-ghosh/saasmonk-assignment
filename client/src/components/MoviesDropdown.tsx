@@ -1,36 +1,39 @@
 import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-
-const people = [
-    "Wade Cooper",
-    "Arlene Mccoy",
-    "Devon Webb",
-    "Tom Cook",
-    "Tanya Fox",
-    "Hellen Schmidt",
-    "Caroline Schultz",
-    "Mason Heaney",
-    "Claudie Smitham",
-    "Emil Schaefer",
-];
+import { useMovieList } from "../store/movies";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
 }
 
-export default function MoviesDropdown() {
-    const [selected, setSelected] = useState('');
+export default function MoviesDropdown({
+    onChange,
+}: {
+    onChange: (movie: string) => void;
+}) {
+    const { movies } = useMovieList();
+    const [selected, setSelected] = useState("");
 
     return (
-        <Listbox value={selected} onChange={setSelected}>
+        <Listbox
+            value={selected}
+            onChange={(value) => {
+                setSelected(value);
+                onChange(value);
+            }}
+        >
             {({ open }) => (
                 <>
                     <div className="relative mt-2">
                         <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-2 pl-1 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
                             <span className="flex items-center">
-                                <span className={`ml-3 block truncate ${selected ? "opacity-100" : "opacity-65"}`}>
-                                    {selected || "Select a person"}
+                                <span
+                                    className={`ml-3 block truncate ${
+                                        selected ? "opacity-100" : "opacity-65"
+                                    }`}
+                                >
+                                    {selected ? movies.find((movie) => movie._id === selected)?.name : "Select a movie"}
                                 </span>
                             </span>
                             <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
@@ -49,9 +52,9 @@ export default function MoviesDropdown() {
                             leaveTo="opacity-0"
                         >
                             <Listbox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                {people.map((person) => (
+                                {movies.map((movie) => (
                                     <Listbox.Option
-                                        key={person}
+                                        key={movie._id}
                                         className={({ active }) =>
                                             classNames(
                                                 active
@@ -60,7 +63,7 @@ export default function MoviesDropdown() {
                                                 "relative cursor-default select-none py-2 pl-3 pr-9"
                                             )
                                         }
-                                        value={person}
+                                        value={movie._id}
                                     >
                                         {({ selected, active }) => (
                                             <>
@@ -73,7 +76,7 @@ export default function MoviesDropdown() {
                                                             "ml-3 block truncate"
                                                         )}
                                                     >
-                                                        {person}
+                                                        {movie.name}
                                                     </span>
                                                 </div>
 
