@@ -9,7 +9,7 @@ export default function MovieCard({
     id: string;
     title: string;
     date: string;
-    rating: string;
+    rating: number;
 }) {
     return (
         <Link to={`/movies/${id}`}>

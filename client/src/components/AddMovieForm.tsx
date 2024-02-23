@@ -1,22 +1,35 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import axios from "axios";
+import { useMovieList } from "../store/movies";
 
 function AddMovieForm() {
-    const [name, setName] = useState("");
-    const [releaseDate, setReleaseDate] = useState("");
     const [showModal, setShowModal] = useState(false);
+    const {movies, setMovies} = useMovieList();
+
+    const formRef = useRef<HTMLFormElement>(null);
 
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("Movie name:", name);
-        console.log("Release date:", releaseDate);
 
-        setName("");
-        setReleaseDate("");
+        const formData = new FormData(formRef.current!);
+        const name = formData.get("name") as string;
+        const releaseDate = formData.get("releaseDate") as string;
 
-        closeModal();
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/movies`, {
+                name,
+                releaseDate,
+            });
+
+            setMovies([response.data, ...movies]);
+        } catch (error) {
+            console.error("Failed to create movie", error);
+        } finally {
+            closeModal();
+        }
     };
 
     return (
@@ -40,6 +53,7 @@ function AddMovieForm() {
                             Add New Movie
                         </h2>
                         <form
+                            ref={formRef}
                             className="flex flex-col space-y-4"
                             onSubmit={handleSubmit}
                         >
@@ -48,8 +62,6 @@ function AddMovieForm() {
                                 id="name"
                                 name="name"
                                 placeholder="Name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
                                 className="px-4 py-2 rounded border border-gray-300 focus:border-blue-500"
                             />
                             <input
@@ -57,8 +69,6 @@ function AddMovieForm() {
                                 id="releaseDate"
                                 name="releaseDate"
                                 placeholder="Release Date"
-                                value={releaseDate}
-                                onChange={(e) => setReleaseDate(e.target.value)}
                                 className="px-4 py-2 rounded border border-gray-300 focus:border-blue-500"
                             />
                             <button

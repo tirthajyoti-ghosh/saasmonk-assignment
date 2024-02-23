@@ -24,16 +24,20 @@ router.get('/movies', async (req: Request, res: Response) => {
         ];
 
         const movies = await Movie.aggregate(aggregation);
-        res.json(movies[0]);
+        res.json(movies);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch movies' });
     }
 });
 
-router.get('/movies', async (req: Request, res: Response) => {
+router.post('/movies', async (req: Request, res: Response) => {
     try {
-        const movies = await Movie.find();
-        res.json(movies);
+        if (!req.body.name || !req.body.releaseDate) {
+            return res.status(400).json({ error: 'Name and release date are required' });
+        }
+        const newMovie = new Movie(req.body);
+        const savedMovie = await newMovie.save();
+        res.status(201).json(savedMovie);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch movies' });
     }
