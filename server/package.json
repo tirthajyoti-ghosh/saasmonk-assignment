@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon -L --watch src --ext ts --exec npx ts-node src/index.ts"
+    "dev": "nodemon -L --watch src --ext ts --exec npx ts-node api/index.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
