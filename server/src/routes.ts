@@ -31,6 +31,7 @@ router.get('/movies', async (req: Request, res: Response) => {
         const movies = await Movie.aggregate(aggregation);
         res.json(movies);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Failed to fetch movies' });
     }
 });
@@ -44,7 +45,8 @@ router.post('/movies', async (req: Request, res: Response) => {
         const savedMovie = await newMovie.save();
         res.status(201).json(savedMovie);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch movies' });
+        console.log(error);
+        res.status(500).json({ error: 'Failed to save movie' });
     }
 });
 
