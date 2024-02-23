@@ -91,7 +91,7 @@ router.delete('/movies/:id', async (req: Request, res: Response) => {
 router.get('/movies/:id/reviews', async (req: Request, res: Response) => {
     try {
         if (req.query.search) {
-            const reviews = await Review.find({ $reviewComments: { $search: req.query.search as string } });
+            const reviews = await Review.find({ reviewComments: { $search: req.query.search as string } });
             res.json(reviews);
 
             return;
