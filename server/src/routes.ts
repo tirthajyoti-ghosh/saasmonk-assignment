@@ -58,6 +58,7 @@ router.get('/movies/:id', async (req: Request, res: Response) => {
         }
         res.json(movie);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Failed to fetch movie' });
     }
 });
@@ -69,7 +70,7 @@ router.put('/movies/:id', async (req: Request, res: Response) => {
             return res.status(404).json({ error: 'Movie not found' });
         }
         res.json(movie);
-    } catch (error) {
+    } catch (error) {  
         res.status(500).json({ error: 'Failed to update movie' });
     }
 });
@@ -90,7 +91,7 @@ router.delete('/movies/:id', async (req: Request, res: Response) => {
 router.get('/movies/:id/reviews', async (req: Request, res: Response) => {
     try {
         if (req.query.search) {
-            const reviews = await Review.find({ $text: { $search: req.query.search as string } });
+            const reviews = await Review.find({ $reviewComments: { $search: req.query.search as string } });
             res.json(reviews);
 
             return;
@@ -99,6 +100,7 @@ router.get('/movies/:id/reviews', async (req: Request, res: Response) => {
         const reviews = await Review.find({ movieId: new Types.ObjectId(req.params.id) });
         res.json(reviews);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Failed to fetch reviews' });
     }
 });
